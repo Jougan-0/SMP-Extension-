@@ -1,0 +1,66 @@
+{
+  "scopeName": "source.smp",
+  "patterns": [
+      {
+          "include": "#comments"
+      },
+      {
+          "include": "#keys"
+      },
+      {
+          "include": "#values"
+      }
+  ],
+  "repository": {
+      "comments": {
+          "patterns": [
+              {
+                  "name": "comment.line.double-slash.smp",
+                  "match": "//.*$"
+              }
+          ]
+      },
+      "keys": {
+          "patterns": [
+              {
+                  "name": "keyword.other.key.smp",
+                  "match": "\"([a-zA-Z0-9_]+)\"(?=\\s*:\\s*)"
+              }
+          ]
+      },
+      "values": {
+          "patterns": [
+              {
+                  "name": "string.quoted.double.smp",
+                  "begin": "\"",
+                  "end": "\"",
+                  "patterns": [
+                      {
+                          "include": "#escape"
+                      }
+                  ]
+              },
+              {
+                  "name": "constant.numeric.smp",
+                  "match": "\\b\\d+(\\.\\d+)?\\b"
+              },
+              {
+                  "name": "constant.language.boolean.smp",
+                  "match": "\\b(true|false)\\b"
+              },
+              {
+                  "name": "variable.other.smp",
+                  "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b"
+              }
+          ]
+      },
+      "escape": {
+          "patterns": [
+              {
+                  "name": "constant.character.escape.smp",
+                  "match": "\\\\(.)"
+              }
+          ]
+      }
+  }
+}

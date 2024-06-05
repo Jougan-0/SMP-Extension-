@@ -1,0 +1,52 @@
+{
+  "name": "smp-extension",
+  "displayName": "SMP Extension",
+  "description": "Extension for enhancing the developer experience with Service Mesh Performance profiles",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.58.0"
+  },
+  "categories": [
+    "Programming Languages"
+],
+"activationEvents": [
+    "onLanguage:smp"
+],
+  "main": "./extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "smp",
+        "aliases": ["SMP", "smp"],
+        "extensions": [".smp.json"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "smp",
+        "scopeName": "source.smp",
+        "path": "./syntaxes/smp.json"
+      }
+    ],
+    "themes": [
+      {
+          "label": "SMP Theme",
+          "uiTheme": "vs-dark", 
+          "path": "./themes/smp-theme-color-theme.json"
+      }
+  ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./out/extension"
+},
+  "devDependencies": {
+    "@types/vscode": "^1.58.0",
+    "eslint": "^7.29.0",
+    "typescript": "^4.3.2",
+    "vscode-test": "^1.5.2"
+  }
+}

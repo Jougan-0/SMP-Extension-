@@ -1,0 +1,52 @@
+{
+    "name": "SMP Theme",
+    "type": "dark", // or "light"
+    "colors": {
+        // Define general editor colors here
+    },
+    "tokenColors": [
+        {
+            "scope": "comment.line.double-slash.smp",
+            "settings": {
+                "foreground": "#6A9955", // Green color for comments
+                "fontStyle": "italic"
+            }
+        },
+        {
+            "scope": "keyword.other.key.smp",
+            "settings": {
+                "foreground": "#9CDCFE" // Blue color for keys
+            }
+        },
+        {
+            "scope": "string.quoted.double.smp",
+            "settings": {
+                "foreground": "#CE9178" // Red color for strings
+            }
+        },
+        {
+            "scope": "constant.numeric.smp",
+            "settings": {
+                "foreground": "#B5CEA8" // Light green color for numbers
+            }
+        },
+        {
+            "scope": "constant.language.boolean.smp",
+            "settings": {
+                "foreground": "#d6be56" // Blue color for booleans
+            }
+        },
+        {
+            "scope": "variable.other.smp",
+            "settings": {
+                "foreground": "#569CD6" // Light blue color for other variables
+            }
+        },
+        {
+            "scope": "constant.character.escape.smp",
+            "settings": {
+                "foreground": "#D7BA7D" // Yellow color for escape sequences
+            }
+        }
+    ]
+}
