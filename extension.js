@@ -8,6 +8,20 @@ const SCHEMA_URLS = {
     "relationship.json": "https://raw.githubusercontent.com/meshery/schemas/master/schemas/constructs/v1alpha2/relationship.json"
 };
 
+const defaultValues = {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "core.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "defaultName",
+    "displayName": "Default Display Name",
+    "description": "Default description",
+    "status": "enabled",
+    "registrant": { "hostname": "defaultHostname" },
+    "category": "defaultCategory",
+    "subCategory": "defaultSubCategory",
+    "model": { "version": "defaultVersion" }
+};
+
 // Function to fetch the schema
 async function fetchSchema(url) {
     try {
@@ -20,16 +34,34 @@ async function fetchSchema(url) {
 }
 
 // Function to generate the boilerplate JSON
-function generateBoilerplate(schema) {
+function generateBoilerplate(schema, schemaName) {
     const boilerplate = {};
+
+    // Include id at the top for all schemas except relationship.json
+    if (schemaName !== 'relationship.json') {
+        boilerplate.id = defaultValues.id;
+    }
 
     for (const key in schema.properties) {
         if (schema.properties.hasOwnProperty(key)) {
-            boilerplate[key] = generatePlaceholder(schema.properties[key]);
+            boilerplate[key] = key in defaultValues ? defaultValues[key] : generatePlaceholder(schema.properties[key]);
         }
     }
 
+    // Ensure required properties are present with default values if not already set
+    if (schema.required) {
+        schema.required.forEach(req => {
+            if (!boilerplate.hasOwnProperty(req)) {
+                boilerplate[req] = generateDefaultPlaceholder(req);
+            }
+        });
+    }
+
     return boilerplate;
+}
+
+function generateDefaultPlaceholder(key) {
+    return defaultValues[key] || `{{${key}}}`;
 }
 
 function generatePlaceholder(property) {
@@ -37,7 +69,7 @@ function generatePlaceholder(property) {
         const result = {};
         for (const key in property.properties) {
             if (property.properties.hasOwnProperty(key)) {
-                result[key] = generatePlaceholder(property.properties[key]);
+                result[key] = key in defaultValues ? defaultValues[key] : generatePlaceholder(property.properties[key]);
             }
         }
         return result;
@@ -48,10 +80,13 @@ function generatePlaceholder(property) {
             case 'boolean':
                 return true;
             case 'string':
-            case 'undefined':
                 return "";
+            case 'number':
+                return 0;
+            case 'integer':
+                return 0;
             default:
-                return ""; // Placeholder for other types
+                return "";
         }
     }
 }
@@ -83,7 +118,7 @@ async function activate(context) {
         const url = SCHEMA_URLS[selectedSchema];
         try {
             const schema = await fetchSchema(url);
-            const boilerplate = generateBoilerplate(schema);
+            const boilerplate = generateBoilerplate(schema, selectedSchema);
 
             const edit = new vscode.WorkspaceEdit();
             const position = editor.selection.active;
@@ -107,7 +142,7 @@ async function activate(context) {
                     console.log("Entered");
                     const completionItems = await Promise.all(Object.keys(SCHEMA_URLS).map(async key => {
                         const schema = await fetchSchema(SCHEMA_URLS[key]);
-                        const boilerplate = generateBoilerplate(schema);
+                        const boilerplate = generateBoilerplate(schema, key);
                         const jsonString = JSON.stringify(boilerplate, null, 2);
 
                         const item = new vscode.CompletionItem(key, vscode.CompletionItemKind.Snippet);
